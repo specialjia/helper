@@ -1,4 +1,4 @@
-#include "pch.h"
+
 #include "jwqHelper.h"
 
 #include <windows.h>
