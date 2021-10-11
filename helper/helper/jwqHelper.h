@@ -23,8 +23,11 @@ namespace jwq
 	class CFileHelper
 	{
 	public:
-		static bool CreateFileAlways(const WCHAR* path);
+		
+		static bool CreateFileEx(std::wstring path);
 		static HANDLE OpenOrCreateFile(const WCHAR* path);
+	private:
+		static bool CreateFileAlways(const WCHAR* path);
 	};
 
 
@@ -54,6 +57,14 @@ namespace jwq
 
 		static bool ExecuteAndGetStdOutput(std::wstring strCmd, std::wstring& strStdOutput, std::wstring& strMsg,
 			DWORD dwMillisecondsTimeOut = INFINITE, bool bWow64FsRedirection = false, bool bTimeOutKillProcess = false);
+	};
+
+	class CDirHelper
+	{
+	public:
+		static bool CreateDirRecursively(const std::wstring& directory);
+		static bool DeleteDir(std::wstring dir);
+		static std::wstring GetPathDir(std::wstring path);
 	};
 	
 }

@@ -1,6 +1,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "jwqHelper.h"
 
+#include <atlstr.h>
 #include <windows.h>
 #include <ShlObj.h>
 
@@ -51,6 +52,19 @@ bool jwq::CFileHelper::CreateFileAlways(const WCHAR *path)
 	}
 	CloseHandle(hFile);
 	return false;
+}
+
+bool jwq::CFileHelper::CreateFileEx(std::wstring path)
+{
+	bool ret = CreateFileAlways(path.c_str());
+	if(!ret && GetLastError()==3)
+	{
+		std::wstring targetDir = jwq::CDirHelper::GetPathDir(path);
+		ret = jwq::CDirHelper::CreateDirRecursively(targetDir);
+		ret = CreateFileAlways(path.c_str());
+	}
+	return ret;
+	
 }
 
 HANDLE jwq::CFileHelper::OpenOrCreateFile(const WCHAR* path)
@@ -329,4 +343,61 @@ bool jwq::CCmdHelper::cmdRun(std::wstring strCmd, std::wstring& strMsg, std::wst
 	DebugLog(L"Exit");
 
 	return true;
+}
+
+bool jwq::CDirHelper::CreateDirRecursively(const std::wstring& directory)
+{
+	auto ret = SHCreateDirectoryExW(0, directory.c_str(), NULL);
+	return ret == ERROR_SUCCESS || ret == ERROR_ALREADY_EXISTS;
+}
+
+bool jwq::CDirHelper::DeleteDir(std::wstring dir)
+{
+	WIN32_FIND_DATA ffd;
+	CString path;
+	HANDLE hFind = INVALID_HANDLE_VALUE;
+	BOOL   success = TRUE;
+	path.Append(dir.c_str());
+	path.Append(_T("\\*"));
+	hFind = FindFirstFile(path, &ffd);
+
+	if (INVALID_HANDLE_VALUE == hFind)
+	{
+		return success;
+	}
+	do {
+		CString name;
+		if (ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+		{
+			continue;
+		}
+		else
+		{
+			name.Append(dir.c_str());
+			name.Append(_T("\\"));
+			name.Append(ffd.cFileName);
+			success = DeleteFile(name);
+			if (!success)
+			{
+				return success;
+			}
+		}
+	} while (FindNextFile(hFind, &ffd) != 0);
+	return success;
+
+	 
+}
+
+std::wstring jwq::CDirHelper::GetPathDir(std::wstring path)
+{
+	if (path.find(L'\\') == -1 && path.find(L'/') == -1) return L"";
+
+	int pos = path.rfind(L'\\');
+	if (pos == std::wstring::npos)
+	{
+		pos = path.rfind(L'/');
+	}
+	if (pos == std::wstring::npos) return L"";
+	std::wstring dir = path.substr(0, pos);
+	return dir;
 }
