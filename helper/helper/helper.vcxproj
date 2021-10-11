@@ -153,9 +153,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="jwqHelper.h" />
+    <ClInclude Include="log.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="jwqHelper.cpp" />
+    <ClCompile Include="log.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
