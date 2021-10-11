@@ -1,8 +1,10 @@
-
+#define _CRT_SECURE_NO_WARNINGS
 #include "jwqHelper.h"
 
 #include <windows.h>
 #include <ShlObj.h>
+
+#include "log.h"
 
 namespace jwq
 {
@@ -104,6 +106,11 @@ std::wstring jwq::CStringHelper::Utf8ToWstring(std::string strUtf8)
 	return charToWstring(strUtf8,CP_UTF8);
 }
 
+std::wstring jwq::CStringHelper::AnsiToWstring(std::string strAnsi)
+{
+	return charToWstring(strAnsi, CP_ACP);
+}
+
 std::string jwq::CStringHelper::wcharToString(std::wstring str, DWORD nCodePage)
 {
 	int nLen = ::WideCharToMultiByte(nCodePage, 0, str.c_str(), str.length(), NULL, 0,NULL,NULL) + 2;
@@ -152,4 +159,174 @@ std::wstring& jwq::CStringHelper::replaceStr(std::wstring &strContent, std::wstr
 			break;
 	}
 	return strContent;
+}
+
+
+std::wstring jwq::CStringHelper::charToWstring(std::string str, DWORD nCodePage)
+{
+	int nLen = ::MultiByteToWideChar(nCodePage, 0, str.c_str(), str.length(), NULL, 0) * 2 + 2;
+	wchar_t* p = (wchar_t*)malloc(nLen);
+	memset(p, 0, nLen);
+	::MultiByteToWideChar(nCodePage, 0, str.c_str(), str.length(), p, nLen / 2);
+	std::wstring strRet = p;
+	free(p);
+	return strRet;
+}
+
+
+bool jwq::CCmdHelper::cmdRun(std::wstring strCmd, std::wstring& strMsg, std::wstring strFileFullPathNameToSave,
+	 DWORD dwMillisecondsTimeOut, bool bWow64FsRedirection, bool bTimeOutKillProcess)
+{
+
+	DebugLog(L"Enter strCmd(%s), dwMillisecondsTimeOut(%d), bWow64FsRedirection(%s)", strCmd.c_str(), dwMillisecondsTimeOut, bWow64FsRedirection ? L"true" : L"false");
+
+	BOOL bSuccessful = FALSE;
+
+	STARTUPINFO si;
+	PROCESS_INFORMATION pi;
+
+	DWORD dwReturn = 0;
+
+	std::wstring strTemp;
+
+	DWORD dwErrorCode = 0;
+
+	HANDLE hFileOuntput = NULL;
+
+	SECURITY_ATTRIBUTES psa = { sizeof(psa),NULL,TRUE };;
+	psa.bInheritHandle = TRUE;
+
+	WCHAR szwcharCmd[MAX_PATH];
+
+	 
+	PVOID OldValue = NULL;
+	//==================================================================================================
+
+	si.cb = sizeof(STARTUPINFO);
+
+	GetStartupInfo(&si);
+
+	si.dwFlags = STARTF_USESTDHANDLES | STARTF_USESHOWWINDOW;
+#ifdef _DEBUG
+	si.wShowWindow = TRUE; //TRUE表示显示创建的进程的窗口
+#else
+	si.wShowWindow = FALSE; //TRUE表示显示创建的进程的窗口
+#endif // DEBUG
+
+	hFileOuntput = CreateFile(strFileFullPathNameToSave.c_str(),
+		GENERIC_WRITE,
+		FILE_SHARE_READ | FILE_SHARE_WRITE,
+		&psa,
+		OPEN_ALWAYS,
+		FILE_ATTRIBUTE_NORMAL,
+		NULL);
+
+	if (INVALID_HANDLE_VALUE == hFileOuntput)
+	{
+		strMsg = L"create file err";
+		strMsg += jwq::CStringHelper::AnsiToWstring(_itoa(GetLastError(), NULL, 16));
+		return false;
+	}
+	//--------------------------------------------------------------------------------------------------
+	si.hStdOutput = hFileOuntput;
+	si.hStdInput = hFileOuntput;
+	si.hStdError = hFileOuntput;
+
+	wcscpy(szwcharCmd, strCmd.c_str());
+
+	 
+	bSuccessful = CreateProcess(NULL,
+		szwcharCmd, //在Unicode版本中此参数不能为常量字符串，因为此参数会被修改    
+		NULL,
+		NULL,
+		TRUE,
+		NULL,
+		NULL,
+		NULL,
+		&si,
+		&pi);
+
+	dwErrorCode = GetLastError();
+
+	 
+	if (!bSuccessful)
+	{
+		strMsg = L"CreateProcess err";
+		strMsg += jwq::CStringHelper::AnsiToWstring(_itoa(dwErrorCode, NULL, 16));
+		CloseHandle(hFileOuntput);
+		return false;
+	}
+
+	//-------------------------------------------------------------------------------------------------------------
+	dwReturn = WaitForSingleObject(pi.hProcess, dwMillisecondsTimeOut);
+	switch (dwReturn)
+	{
+	case WAIT_ABANDONED:
+	{ 
+	}
+	break;
+	case WAIT_OBJECT_0:
+	{
+		 
+		if (bTimeOutKillProcess)
+		{
+			bSuccessful = ::TerminateProcess(pi.hProcess, 0);
+			dwReturn = ::WaitForSingleObject(pi.hProcess, 800);
+			if (!bSuccessful)
+			{
+				DWORD dwErrorCode = GetLastError();
+
+				int i = 0;
+			}
+		}
+	}
+	break;
+	case WAIT_TIMEOUT:
+	{
+		strMsg = L"wait timeout";
+		if (bTimeOutKillProcess)
+		{
+			bSuccessful = ::TerminateProcess(pi.hProcess, 0);
+			dwReturn = ::WaitForSingleObject(pi.hProcess, 800);
+			if (!bSuccessful)
+			{
+				DWORD dwErrorCode = GetLastError();
+
+				int i = 0;
+			}
+		}
+
+		::CloseHandle(pi.hThread);
+		::CloseHandle(pi.hProcess);
+		::CloseHandle(hFileOuntput);
+		return false;
+	}
+	break;
+	case WAIT_FAILED:
+	{
+		strMsg = L"wait failed";
+
+		::CloseHandle(pi.hThread);
+		::CloseHandle(pi.hProcess);
+		::CloseHandle(hFileOuntput);
+		return false;
+	}
+	break;
+	default:
+	{
+		 
+	}
+	}
+
+	//-------------------------------------------------------------------------------------------------------------
+
+	//::DeleteFile(strFileFullPathNameToSave);
+
+	::CloseHandle(pi.hThread);
+	::CloseHandle(pi.hProcess);
+	::CloseHandle(hFileOuntput);
+
+	DebugLog(L"Exit");
+
+	return true;
 }

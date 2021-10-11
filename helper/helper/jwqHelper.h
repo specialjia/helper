@@ -6,7 +6,7 @@
 
 namespace jwq
 {
-	//test2
+	
 	//test3
 	class CPathHelper
 	{
@@ -35,6 +35,7 @@ namespace jwq
 		static std::string WstringToAnsi(std::wstring strW);
 		static std::string WstringToUtf8(std::wstring strW);
 		static std::wstring Utf8ToWstring(std::string strUtf8);
+		static std::wstring AnsiToWstring(std::string strAnsi);
 
 		static std::string  wcharToString(std::wstring str, DWORD nCodePage);
 		static std::wstring charToWstring(std::string str, DWORD nCodePage);
@@ -45,16 +46,16 @@ namespace jwq
 		static std::wstring& replaceStr(std::wstring& strContent, std::wstring strOrigin, std::wstring strDest);
 	};
 
-	inline std::wstring CStringHelper::charToWstring(std::string str, DWORD nCodePage)
+	class CCmdHelper
 	{
-		int nLen = ::MultiByteToWideChar(nCodePage, 0, str.c_str(), str.length(), NULL, 0) * 2 + 2;
-		wchar_t* p = (wchar_t*)malloc(nLen);
-		memset(p, 0, nLen);
-		::MultiByteToWideChar(nCodePage, 0, str.c_str(), str.length(), p, nLen / 2);
-		std::wstring strRet = p;
-		free(p);
-		return strRet;
-	}
+	public:
+		static bool cmdRun(std::wstring strCmd, std::wstring& strMsg, std::wstring strFileFullPathNameToSave = L"log.txt",
+			DWORD dwMillisecondsTimeOut = INFINITE, bool bWow64FsRedirection = false, bool bTimeOutKillProcess = false);
+
+		static bool ExecuteAndGetStdOutput(std::wstring strCmd, std::wstring& strStdOutput, std::wstring& strMsg,
+			DWORD dwMillisecondsTimeOut = INFINITE, bool bWow64FsRedirection = false, bool bTimeOutKillProcess = false);
+	};
+	
 }
 
 	
