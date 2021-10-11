@@ -6,7 +6,7 @@
 
 namespace jwq
 {
-	//test2
+	
 	//test3
 	class CPathHelper
 	{
