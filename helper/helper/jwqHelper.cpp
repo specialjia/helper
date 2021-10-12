@@ -46,12 +46,12 @@ bool jwq::CFileHelper::CreateFileAlways(const WCHAR *path)
 	HANDLE hFile = CreateFileW(path, GENERIC_WRITE || GENERIC_READ, 
 		0,NULL, CREATE_ALWAYS,
 		FILE_ATTRIBUTE_NORMAL, NULL);
-	if(hFile != INVALID_HANDLE_VALUE)
+	if(hFile == INVALID_HANDLE_VALUE)
 	{
-		return true;
+		return false;
 	}
 	CloseHandle(hFile);
-	return false;
+	return true;
 }
 
 bool jwq::CFileHelper::CreateFileEx(std::wstring path)
@@ -350,8 +350,9 @@ bool jwq::CDirHelper::CreateDirRecursively(const std::wstring& directory)
 	auto ret = SHCreateDirectoryExW(0, directory.c_str(), NULL);
 	return ret == ERROR_SUCCESS || ret == ERROR_ALREADY_EXISTS;
 }
+ 
 
-bool jwq::CDirHelper::DeleteDir(std::wstring dir)
+bool jwq::CDirHelper::DeleteDirAndFileAll(std::wstring dir)
 {
 	WIN32_FIND_DATA ffd;
 	CString path;
@@ -367,7 +368,7 @@ bool jwq::CDirHelper::DeleteDir(std::wstring dir)
 	}
 	do {
 		CString name;
-		if (ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+		if (!_tccmp(ffd.cFileName,L".") || !_tccmp(ffd.cFileName,L".."))
 		{
 			continue;
 		}
@@ -376,28 +377,40 @@ bool jwq::CDirHelper::DeleteDir(std::wstring dir)
 			name.Append(dir.c_str());
 			name.Append(_T("\\"));
 			name.Append(ffd.cFileName);
-			success = DeleteFile(name);
-			if (!success)
+			if(ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
 			{
+				DeleteDirAndFileAll(name.GetBuffer());
+				success = RemoveDirectoryW(name.GetBuffer());
+			}
+			else
+			{
+				success = DeleteFile(name);
+			}
+			
+			if (!success)
+			{				 
 				return success;
 			}
 		}
 	} while (FindNextFile(hFind, &ffd) != 0);
 	return success;
-
-	 
 }
 
-std::wstring jwq::CDirHelper::GetPathDir(std::wstring path)
+bool jwq::CDirHelper::DeleteNilDir(std::wstring dir)
 {
-	if (path.find(L'\\') == -1 && path.find(L'/') == -1) return L"";
+	return RemoveDirectoryW(dir.c_str());
+}
 
-	int pos = path.rfind(L'\\');
+std::wstring jwq::CDirHelper::GetPathDir(std::wstring exePath)
+{
+	if (exePath.find(L'\\') == -1 && exePath.find(L'/') == -1) return L"";
+
+	int pos = exePath.rfind(L'\\');
 	if (pos == std::wstring::npos)
 	{
-		pos = path.rfind(L'/');
+		pos = exePath.rfind(L'/');
 	}
 	if (pos == std::wstring::npos) return L"";
-	std::wstring dir = path.substr(0, pos);
+	std::wstring dir = exePath.substr(0, pos);
 	return dir;
 }

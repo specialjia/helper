@@ -63,8 +63,9 @@ namespace jwq
 	{
 	public:
 		static bool CreateDirRecursively(const std::wstring& directory);
-		static bool DeleteDir(std::wstring dir);
-		static std::wstring GetPathDir(std::wstring path);
+		static bool DeleteDirAndFileAll(std::wstring dir);
+		static bool DeleteNilDir(std::wstring dir);
+		static std::wstring GetPathDir(std::wstring exePath);
 	};
 	
 }
