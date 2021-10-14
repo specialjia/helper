@@ -6,6 +6,77 @@
 
 namespace jwq
 {
+class  CDuiString
+{
+public:
+	enum { MAX_LOCAL_STRING_LEN = 63 };
+
+	CDuiString();
+	CDuiString(const TCHAR ch);
+	CDuiString(const CDuiString& src);
+	CDuiString(LPCTSTR lpsz, int nLen = -1);
+	~CDuiString();
+
+	void Empty();
+	int GetLength() const;
+	bool IsEmpty() const;
+	TCHAR GetAt(int nIndex) const;
+	void Append(LPCTSTR pstr);
+	void Assign(LPCTSTR pstr, int nLength = -1);
+	LPCTSTR GetData() const;
+
+	void SetAt(int nIndex, TCHAR ch);
+	operator LPCTSTR() const;
+
+	TCHAR operator[] (int nIndex) const;
+	const CDuiString& operator=(const CDuiString& src);
+	const CDuiString& operator=(const TCHAR ch);
+	const CDuiString& operator=(LPCTSTR pstr);
+#ifdef _UNICODE
+	const CDuiString& operator=(LPCSTR lpStr);
+	const CDuiString& operator+=(LPCSTR lpStr);
+#else
+	const CDuiString& operator=(LPCWSTR lpwStr);
+	const CDuiString& operator+=(LPCWSTR lpwStr);
+#endif
+	CDuiString operator+(const CDuiString& src) const;
+	CDuiString operator+(LPCTSTR pstr) const;
+	const CDuiString& operator+=(const CDuiString& src);
+	const CDuiString& operator+=(LPCTSTR pstr);
+	const CDuiString& operator+=(const TCHAR ch);
+
+	bool operator == (LPCTSTR str) const;
+	bool operator != (LPCTSTR str) const;
+	bool operator <= (LPCTSTR str) const;
+	bool operator <  (LPCTSTR str) const;
+	bool operator >= (LPCTSTR str) const;
+	bool operator >  (LPCTSTR str) const;
+
+	int Compare(LPCTSTR pstr) const;
+	int CompareNoCase(LPCTSTR pstr) const;
+
+	void MakeUpper();
+	void MakeLower();
+
+	CDuiString Left(int nLength) const;
+	CDuiString Mid(int iPos, int nLength = -1) const;
+	CDuiString Right(int nLength) const;
+
+	int Find(TCHAR ch, int iPos = 0) const;
+	int Find(LPCTSTR pstr, int iPos = 0) const;
+	int ReverseFind(TCHAR ch) const;
+	int Replace(LPCTSTR pstrFrom, LPCTSTR pstrTo);
+
+	int __cdecl Format(LPCTSTR pstrFormat, ...);
+	int __cdecl SmallFormat(LPCTSTR pstrFormat, ...);
+
+protected:
+	int __cdecl InnerFormat(LPCTSTR pstrFormat, va_list Args);
+
+protected:
+	LPTSTR m_pstr;
+	TCHAR m_szBuffer[MAX_LOCAL_STRING_LEN + 1];
+};
 	
 	//test3
 	class CPathHelper
@@ -26,6 +97,8 @@ namespace jwq
 		
 		static bool CreateFileEx(std::wstring path);
 		static HANDLE OpenOrCreateFile(const WCHAR* path);
+		static CDuiString GetFileExtendName(CDuiString strFileName);
+		static CDuiString GetFileNameByFileFullPath(CDuiString strFileFullPathName);
 	private:
 		static bool CreateFileAlways(const WCHAR* path);
 	};
