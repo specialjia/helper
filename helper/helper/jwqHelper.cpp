@@ -958,10 +958,33 @@ std::wstring jwq::CDirHelper::GetPathDir(std::wstring exePath)
 
 bool jwq::CDirHelper::EnumDirFile(std::wstring dir, std::vector<std::wstring>& v)
 {
+	BOOL   success = TRUE;
+	{
+		HANDLE hFind = INVALID_HANDLE_VALUE;
+		WIN32_FIND_DATA ffd;
+		hFind = FindFirstFile(dir.c_str(), &ffd);
+		if (INVALID_HANDLE_VALUE == hFind)
+		{
+			
+		}
+		
+		else if (ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+		{
+			FindClose(hFind);
+		}
+		else
+		{
+			v.push_back(dir);
+			FindClose(hFind);
+			return true;
+		}
+	}
+	
+	
 	WIN32_FIND_DATA ffd;
 	CString path;
 	HANDLE hFind = INVALID_HANDLE_VALUE;
-	BOOL   success = TRUE;
+	
 	path.Append(dir.c_str());
 	path.Append(_T("\\*"));
 	hFind = FindFirstFile(path, &ffd);
@@ -996,5 +1019,6 @@ bool jwq::CDirHelper::EnumDirFile(std::wstring dir, std::vector<std::wstring>& v
 			}
 		}
 	} while (FindNextFile(hFind, &ffd) != 0);
+	FindClose(hFind);
 	return success;
 }
