@@ -12,46 +12,46 @@
 #define ASSERT(expr)  _ASSERTE(expr)
 #endif
 
-CDuiString::CDuiString() : m_pstr(m_szBuffer)
+jwq::CDuiString::CDuiString() : m_pstr(m_szBuffer)
 {
 	m_szBuffer[0] = '\0';
 }
 
-CDuiString::CDuiString(const TCHAR ch) : m_pstr(m_szBuffer)
+jwq::CDuiString::CDuiString(const TCHAR ch) : m_pstr(m_szBuffer)
 {
 	m_szBuffer[0] = ch;
 	m_szBuffer[1] = '\0';
 }
 
-CDuiString::CDuiString(LPCTSTR lpsz, int nLen) : m_pstr(m_szBuffer)
+jwq::CDuiString::CDuiString(LPCTSTR lpsz, int nLen) : m_pstr(m_szBuffer)
 {
 	ASSERT(!::IsBadStringPtr(lpsz, -1) || lpsz == NULL);
 	m_szBuffer[0] = '\0';
 	Assign(lpsz, nLen);
 }
 
-CDuiString::CDuiString(const CDuiString& src) : m_pstr(m_szBuffer)
+jwq::CDuiString::CDuiString(const CDuiString& src) : m_pstr(m_szBuffer)
 {
 	m_szBuffer[0] = '\0';
 	Assign(src.m_pstr);
 }
 
-CDuiString::~CDuiString()
+jwq::CDuiString::~CDuiString()
 {
 	if (m_pstr != m_szBuffer) free(m_pstr);
 }
 
-int CDuiString::GetLength() const
+int jwq::CDuiString::GetLength() const
 {
 	return (int)_tcslen(m_pstr);
 }
 
-CDuiString::operator LPCTSTR() const
+jwq::CDuiString::operator LPCTSTR() const
 {
 	return m_pstr;
 }
 
-void CDuiString::Append(LPCTSTR pstr)
+void jwq::CDuiString::Append(LPCTSTR pstr)
 {
 	int nNewLength = GetLength() + (int)_tcslen(pstr);
 	if (nNewLength >= MAX_LOCAL_STRING_LEN) {
@@ -74,11 +74,11 @@ void CDuiString::Append(LPCTSTR pstr)
 	}
 }
 
-void CDuiString::Assign(LPCTSTR pstr, int cchMax)
+void jwq::CDuiString::Assign(LPCTSTR pstr, int cchMax)
 {
 	if (pstr == NULL) pstr = _T("");
 	cchMax = (cchMax < 0 ? (int)_tcslen(pstr) : cchMax);
-	if (cchMax < MAX_LOCAL_STRING_LEN) {
+	if (cchMax < jwq::CDuiString::MAX_LOCAL_STRING_LEN) {
 		if (m_pstr != m_szBuffer) {
 			free(m_pstr);
 			m_pstr = m_szBuffer;
@@ -92,40 +92,40 @@ void CDuiString::Assign(LPCTSTR pstr, int cchMax)
 	m_pstr[cchMax] = '\0';
 }
 
-bool CDuiString::IsEmpty() const
+bool jwq::CDuiString::IsEmpty() const
 {
 	return m_pstr[0] == '\0';
 }
 
-void CDuiString::Empty()
+void jwq::CDuiString::Empty()
 {
 	if (m_pstr != m_szBuffer) free(m_pstr);
 	m_pstr = m_szBuffer;
 	m_szBuffer[0] = '\0';
 }
 
-LPCTSTR CDuiString::GetData() const
+LPCTSTR jwq::CDuiString::GetData() const
 {
 	return m_pstr;
 }
 
-TCHAR CDuiString::GetAt(int nIndex) const
+TCHAR jwq::CDuiString::GetAt(int nIndex) const
 {
 	return m_pstr[nIndex];
 }
 
-TCHAR CDuiString::operator[] (int nIndex) const
+TCHAR jwq::CDuiString::operator[] (int nIndex) const
 {
 	return m_pstr[nIndex];
 }
 
-const CDuiString& CDuiString::operator=(const CDuiString& src)
+const jwq::CDuiString& jwq::CDuiString::operator=(const CDuiString& src)
 {
 	Assign(src);
 	return *this;
 }
 
-const CDuiString& CDuiString::operator=(LPCTSTR lpStr)
+const jwq::CDuiString& jwq::CDuiString::operator=(LPCTSTR lpStr)
 {
 	if (lpStr)
 	{
@@ -141,7 +141,7 @@ const CDuiString& CDuiString::operator=(LPCTSTR lpStr)
 
 #ifdef _UNICODE
 
-const CDuiString& CDuiString::operator=(LPCSTR lpStr)
+const jwq::CDuiString& jwq::CDuiString::operator=(LPCSTR lpStr)
 {
 	if (lpStr)
 	{
@@ -158,7 +158,7 @@ const CDuiString& CDuiString::operator=(LPCSTR lpStr)
 	return *this;
 }
 
-const CDuiString& CDuiString::operator+=(LPCSTR lpStr)
+const jwq::CDuiString& jwq::CDuiString::operator+=(LPCSTR lpStr)
 {
 	if (lpStr)
 	{
@@ -174,7 +174,7 @@ const CDuiString& CDuiString::operator+=(LPCSTR lpStr)
 
 #else
 
-const CDuiString& CDuiString::operator=(LPCWSTR lpwStr)
+const jwq::CDuiString& jwq::CDuiString::operator=(LPCWSTR lpwStr)
 {
 	if (lpwStr)
 	{
@@ -192,7 +192,7 @@ const CDuiString& CDuiString::operator=(LPCWSTR lpwStr)
 	return *this;
 }
 
-const CDuiString& CDuiString::operator+=(LPCWSTR lpwStr)
+const jwq::CDuiString& jwq::CDuiString::operator+=(LPCWSTR lpwStr)
 {
 	if (lpwStr)
 	{
@@ -208,7 +208,7 @@ const CDuiString& CDuiString::operator+=(LPCWSTR lpwStr)
 
 #endif // _UNICODE
 
-const CDuiString& CDuiString::operator=(const TCHAR ch)
+const jwq::CDuiString& jwq::CDuiString::operator=(const TCHAR ch)
 {
 	Empty();
 	m_szBuffer[0] = ch;
@@ -216,14 +216,14 @@ const CDuiString& CDuiString::operator=(const TCHAR ch)
 	return *this;
 }
 
-CDuiString CDuiString::operator+(const CDuiString& src) const
+jwq::CDuiString jwq::CDuiString::operator+(const CDuiString& src) const
 {
 	CDuiString sTemp = *this;
 	sTemp.Append(src);
 	return sTemp;
 }
 
-CDuiString CDuiString::operator+(LPCTSTR lpStr) const
+jwq::CDuiString jwq::CDuiString::operator+(LPCTSTR lpStr) const
 {
 	if (lpStr)
 	{
@@ -236,13 +236,13 @@ CDuiString CDuiString::operator+(LPCTSTR lpStr) const
 	return *this;
 }
 
-const CDuiString& CDuiString::operator+=(const CDuiString& src)
+const jwq::CDuiString& jwq::CDuiString::operator+=(const CDuiString& src)
 {
 	Append(src);
 	return *this;
 }
 
-const CDuiString& CDuiString::operator+=(LPCTSTR lpStr)
+const jwq::CDuiString& jwq::CDuiString::operator+=(LPCTSTR lpStr)
 {
 	if (lpStr)
 	{
@@ -253,54 +253,54 @@ const CDuiString& CDuiString::operator+=(LPCTSTR lpStr)
 	return *this;
 }
 
-const CDuiString& CDuiString::operator+=(const TCHAR ch)
+const jwq::CDuiString& jwq::CDuiString::operator+=(const TCHAR ch)
 {
 	TCHAR str[] = { ch, '\0' };
 	Append(str);
 	return *this;
 }
 
-bool CDuiString::operator == (LPCTSTR str) const { return (Compare(str) == 0); };
-bool CDuiString::operator != (LPCTSTR str) const { return (Compare(str) != 0); };
-bool CDuiString::operator <= (LPCTSTR str) const { return (Compare(str) <= 0); };
-bool CDuiString::operator <  (LPCTSTR str) const { return (Compare(str) < 0); };
-bool CDuiString::operator >= (LPCTSTR str) const { return (Compare(str) >= 0); };
-bool CDuiString::operator >  (LPCTSTR str) const { return (Compare(str) > 0); };
+bool jwq::CDuiString::operator == (LPCTSTR str) const { return (Compare(str) == 0); };
+bool jwq::CDuiString::operator != (LPCTSTR str) const { return (Compare(str) != 0); };
+bool jwq::CDuiString::operator <= (LPCTSTR str) const { return (Compare(str) <= 0); };
+bool jwq::CDuiString::operator <  (LPCTSTR str) const { return (Compare(str) < 0); };
+bool jwq::CDuiString::operator >= (LPCTSTR str) const { return (Compare(str) >= 0); };
+bool jwq::CDuiString::operator >  (LPCTSTR str) const { return (Compare(str) > 0); };
 
-void CDuiString::SetAt(int nIndex, TCHAR ch)
+void jwq::CDuiString::SetAt(int nIndex, TCHAR ch)
 {
 	ASSERT(nIndex >= 0 && nIndex < GetLength());
 	m_pstr[nIndex] = ch;
 }
 
-int CDuiString::Compare(LPCTSTR lpsz) const
+int jwq::CDuiString::Compare(LPCTSTR lpsz) const
 {
 	return _tcscmp(m_pstr, lpsz);
 }
 
-int CDuiString::CompareNoCase(LPCTSTR lpsz) const
+int jwq::CDuiString::CompareNoCase(LPCTSTR lpsz) const
 {
 	return _tcsicmp(m_pstr, lpsz);
 }
 
-void CDuiString::MakeUpper()
+void jwq::CDuiString::MakeUpper()
 {
 	_tcsupr(m_pstr);
 }
 
-void CDuiString::MakeLower()
+void jwq::CDuiString::MakeLower()
 {
 	_tcslwr(m_pstr);
 }
 
-CDuiString CDuiString::Left(int iLength) const
+jwq::CDuiString jwq::CDuiString::Left(int iLength) const
 {
 	if (iLength < 0) iLength = 0;
 	if (iLength > GetLength()) iLength = GetLength();
 	return CDuiString(m_pstr, iLength);
 }
 
-CDuiString CDuiString::Mid(int iPos, int iLength) const
+jwq::CDuiString jwq::CDuiString::Mid(int iPos, int iLength) const
 {
 	if (iLength < 0) iLength = GetLength() - iPos;
 	if (iPos + iLength > GetLength()) iLength = GetLength() - iPos;
@@ -308,7 +308,7 @@ CDuiString CDuiString::Mid(int iPos, int iLength) const
 	return CDuiString(m_pstr + iPos, iLength);
 }
 
-CDuiString CDuiString::Right(int iLength) const
+jwq::CDuiString jwq::CDuiString::Right(int iLength) const
 {
 	int iPos = GetLength() - iLength;
 	if (iPos < 0) {
@@ -318,7 +318,7 @@ CDuiString CDuiString::Right(int iLength) const
 	return CDuiString(m_pstr + iPos, iLength);
 }
 
-int CDuiString::Find(TCHAR ch, int iPos /*= 0*/) const
+int jwq::CDuiString::Find(TCHAR ch, int iPos /*= 0*/) const
 {
 	ASSERT(iPos >= 0 && iPos <= GetLength());
 	if (iPos != 0 && (iPos < 0 || iPos >= GetLength())) return -1;
@@ -327,7 +327,7 @@ int CDuiString::Find(TCHAR ch, int iPos /*= 0*/) const
 	return (int)(p - m_pstr);
 }
 
-int CDuiString::Find(LPCTSTR pstrSub, int iPos /*= 0*/) const
+int jwq::CDuiString::Find(LPCTSTR pstrSub, int iPos /*= 0*/) const
 {
 	ASSERT(!::IsBadStringPtr(pstrSub, -1));
 	ASSERT(iPos >= 0 && iPos <= GetLength());
@@ -337,14 +337,14 @@ int CDuiString::Find(LPCTSTR pstrSub, int iPos /*= 0*/) const
 	return (int)(p - m_pstr);
 }
 
-int CDuiString::ReverseFind(TCHAR ch) const
+int jwq::CDuiString::ReverseFind(TCHAR ch) const
 {
 	LPCTSTR p = _tcsrchr(m_pstr, ch);
 	if (p == NULL) return -1;
 	return (int)(p - m_pstr);
 }
 
-int CDuiString::Replace(LPCTSTR pstrFrom, LPCTSTR pstrTo)
+int jwq::CDuiString::Replace(LPCTSTR pstrFrom, LPCTSTR pstrTo)
 {
 	CDuiString sTemp;
 	int nCount = 0;
@@ -363,7 +363,7 @@ int CDuiString::Replace(LPCTSTR pstrFrom, LPCTSTR pstrTo)
 	return nCount;
 }
 
-int CDuiString::Format(LPCTSTR pstrFormat, ...)
+int jwq::CDuiString::Format(LPCTSTR pstrFormat, ...)
 {
 	int nRet;
 	va_list Args;
@@ -376,7 +376,7 @@ int CDuiString::Format(LPCTSTR pstrFormat, ...)
 
 }
 
-int CDuiString::SmallFormat(LPCTSTR pstrFormat, ...)
+int jwq::CDuiString::SmallFormat(LPCTSTR pstrFormat, ...)
 {
 	CDuiString sFormat = pstrFormat;
 	TCHAR szBuffer[64] = { 0 };
@@ -388,7 +388,7 @@ int CDuiString::SmallFormat(LPCTSTR pstrFormat, ...)
 	return iRet;
 }
 
-int CDuiString::InnerFormat(LPCTSTR pstrFormat, va_list Args)
+int jwq::CDuiString::InnerFormat(LPCTSTR pstrFormat, va_list Args)
 {
 #if _MSC_VER <= 1400
 	TCHAR* szBuffer = NULL;
@@ -499,6 +499,47 @@ HANDLE jwq::CFileHelper::OpenOrCreateFile(const WCHAR* path)
 		0, NULL, OPEN_ALWAYS,
 		FILE_ATTRIBUTE_NORMAL, NULL);
 	return hFile;
+}
+
+jwq::CDuiString jwq::CFileHelper::GetFileExtendName(CDuiString strFileName)
+{
+	int intCharPosition;
+
+	//Find "\\",Get The File's Name
+	intCharPosition = strFileName.ReverseFind(L'\\');
+	if (-1 != intCharPosition)
+	{
+		strFileName = strFileName.Right(strFileName.GetLength() - intCharPosition - 1);
+	}
+	//AfxMessageBox(strFileName);
+
+	//Find ".",Get the file's extend name
+	intCharPosition = strFileName.ReverseFind(L'.');
+	if (-1 != intCharPosition)
+	{
+		strFileName = strFileName.Right(strFileName.GetLength() - intCharPosition - 1);
+		return strFileName;
+	}
+	else
+	{
+		//No extend name
+		return L"";
+	}
+}
+
+jwq::CDuiString jwq::CFileHelper::GetFileNameByFileFullPath(CDuiString strFileFullPathName)
+{
+	int intCharPosition;
+
+	//Find "\\",Get The File's Name
+	intCharPosition = strFileFullPathName.ReverseFind(L'\\');
+
+	if (-1 != intCharPosition)
+	{
+		strFileFullPathName = strFileFullPathName.Right(strFileFullPathName.GetLength() - intCharPosition - 1);
+	}
+
+	return strFileFullPathName;
 }
 
 std::vector<std::wstring> jwq::CStringHelper::splite(std::wstring& str, std::wstring& strSeparator)

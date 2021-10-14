@@ -4,6 +4,8 @@
 #include <windows.h>
 
 
+namespace jwq
+{
 class  CDuiString
 {
 public:
@@ -75,8 +77,6 @@ protected:
 	LPTSTR m_pstr;
 	TCHAR m_szBuffer[MAX_LOCAL_STRING_LEN + 1];
 };
-namespace jwq
-{
 	
 	//test3
 	class CPathHelper
@@ -97,6 +97,8 @@ namespace jwq
 		
 		static bool CreateFileEx(std::wstring path);
 		static HANDLE OpenOrCreateFile(const WCHAR* path);
+		static CDuiString GetFileExtendName(CDuiString strFileName);
+		static CDuiString GetFileNameByFileFullPath(CDuiString strFileFullPathName);
 	private:
 		static bool CreateFileAlways(const WCHAR* path);
 	};
