@@ -99,6 +99,10 @@ protected:
 		static HANDLE OpenOrCreateFile(const WCHAR* path);
 		static CDuiString GetFileExtendName(CDuiString strFileName);
 		static CDuiString GetFileNameByFileFullPath(CDuiString strFileFullPathName);
+		static CDuiString GetCurrentExeFileNameWithExtendName();
+		static CDuiString GetCurrentExeFileNameWithoutExtendName();
+		static CDuiString GetCurrentExeFileFullPath();
+		static CDuiString GetCurrentExeFileFullPathName();
 	private:
 		static bool CreateFileAlways(const WCHAR* path);
 	};

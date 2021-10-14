@@ -542,6 +542,80 @@ jwq::CDuiString jwq::CFileHelper::GetFileNameByFileFullPath(CDuiString strFileFu
 	return strFileFullPathName;
 }
 
+
+jwq::CDuiString jwq::CFileHelper::GetCurrentExeFileFullPathName()
+{
+	WCHAR szwcharFileName[MAX_PATH];
+
+	GetModuleFileName(NULL, szwcharFileName, MAX_PATH);
+
+	//CDuiString strExeFileFullPathName(szwcharFileName);
+	//return strExeFileFullPathName;
+
+	return szwcharFileName;
+}
+
+//获取程序目录，带最后“\”
+jwq::CDuiString jwq::CFileHelper::GetCurrentExeFileFullPath()
+{
+	CDuiString strExeFileFullPathName;
+	int iCharPosition;
+
+	strExeFileFullPathName = GetCurrentExeFileFullPathName();
+
+	iCharPosition = strExeFileFullPathName.ReverseFind(L'\\');
+
+	return strExeFileFullPathName.Left(iCharPosition + 1);
+}
+
+jwq::CDuiString jwq::CFileHelper::GetCurrentExeFileNameWithExtendName()
+{
+	CDuiString strExeFileFullPathName;
+	int iCharPosition;
+
+	strExeFileFullPathName = GetCurrentExeFileFullPathName();
+
+	iCharPosition = strExeFileFullPathName.ReverseFind(L'\\');
+
+	return strExeFileFullPathName.Right(strExeFileFullPathName.GetLength() - iCharPosition - 1);
+
+}
+
+jwq::CDuiString jwq::CFileHelper::GetCurrentExeFileNameWithoutExtendName()
+{
+	CDuiString strExeFileFullPathName;
+	int iCharPosition = 0;
+	int iCharPosition1 = 0;
+
+	CDuiString strTemp;
+	CDuiString strTemp1;
+	//==============================================================================================
+
+	strExeFileFullPathName = GetCurrentExeFileFullPathName();
+
+	strTemp = strExeFileFullPathName;
+
+	iCharPosition = strExeFileFullPathName.ReverseFind(L'\\');
+
+	if (-1 != iCharPosition)
+	{
+		strTemp = strExeFileFullPathName.Right(strExeFileFullPathName.GetLength() - iCharPosition - 1);
+	}
+
+	strTemp1 = strTemp;
+
+	iCharPosition1 = strTemp.ReverseFind(L'.');
+
+	if (-1 != iCharPosition)
+	{
+		strTemp1 = strTemp.Left(iCharPosition1);
+	}
+
+	return strTemp1;
+}
+
+
+
 std::vector<std::wstring> jwq::CStringHelper::splite(std::wstring& str, std::wstring& strSeparator)
 {
 	std::vector<std::wstring> v;
