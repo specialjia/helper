@@ -66,6 +66,7 @@ namespace jwq
 		static bool DeleteDirAndFileAll(std::wstring dir);
 		static bool DeleteNilDir(std::wstring dir);
 		static std::wstring GetPathDir(std::wstring exePath);
+		static bool EnumDirFile(std::wstring dir,std::vector<std::wstring> &v);
 	};
 	
 }
