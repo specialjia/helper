@@ -8,6 +8,8 @@
 #include "log.h"
 
 #include <tchar.h>
+#pragma comment(lib,"Version")
+
 #ifndef ASSERT
 #define ASSERT(expr)  _ASSERTE(expr)
 #endif
