@@ -555,6 +555,43 @@ jwq::CDuiString jwq::CFileHelper::GetCurrentExeFileFullPathName()
 	return szwcharFileName;
 }
 
+std::wstring jwq::CFileHelper::GetVersion()
+{
+	TCHAR cPath[200], szVersionBuffer[200];
+	DWORD dwHandle, InfoSize;
+	std::wstring strVersion;
+	::GetModuleFileName(NULL, cPath, sizeof(cPath)); //首先获得版本信息资源的长度
+	InfoSize = GetFileVersionInfoSize(cPath, &dwHandle); //将版本信息资源读入缓冲区
+
+	char* InfoBuf = new char[InfoSize];
+	GetFileVersionInfo(cPath, 0, InfoSize, InfoBuf); //获得生成文件使用的代码页及文件版本
+	unsigned int  cbTranslate = 0;
+	struct LANGANDCODEPAGE {
+		WORD wLanguage;
+		WORD wCodePage;
+	} *lpTranslate;
+	VerQueryValue(InfoBuf, TEXT("\\VarFileInfo\\Translation"), (LPVOID*)&lpTranslate, &cbTranslate);
+	// Read the file description for each language and code page.
+	for (int i = 0; i < (cbTranslate / sizeof(struct LANGANDCODEPAGE)); i++)
+	{
+		TCHAR  SubBlock[200];
+		wsprintf(SubBlock,
+			TEXT("\\StringFileInfo\\%04x%04x\\FileVersion"),
+			lpTranslate[i].wLanguage,
+			lpTranslate[i].wCodePage);
+		void* lpBuffer = NULL;
+		unsigned int dwBytes = 0;
+		VerQueryValue(InfoBuf,
+			SubBlock,
+			&lpBuffer,
+			&dwBytes);
+		std::wstring strTemp = (TCHAR*)lpBuffer;
+		strVersion += strTemp;
+	}
+	delete InfoBuf;
+	return strVersion;
+}
+
 //获取程序目录，带最后“\”
 jwq::CDuiString jwq::CFileHelper::GetCurrentExeFileFullPath()
 {

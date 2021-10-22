@@ -103,6 +103,7 @@ protected:
 		static CDuiString GetCurrentExeFileNameWithoutExtendName();
 		static CDuiString GetCurrentExeFileFullPath();
 		static CDuiString GetCurrentExeFileFullPathName();
+		static std::wstring GetVersion();
 	private:
 		static bool CreateFileAlways(const WCHAR* path);
 	};
