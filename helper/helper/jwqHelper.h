@@ -117,6 +117,7 @@ protected:
 		static std::string WstringToUtf8(std::wstring strW);
 		static std::wstring Utf8ToWstring(std::string strUtf8);
 		static std::wstring AnsiToWstring(std::string strAnsi);
+		static std::string AnsiToUtf8(std::string strAnsi);
 
 		static std::string  wcharToString(std::wstring str, DWORD nCodePage);
 		static std::wstring charToWstring(std::string str, DWORD nCodePage);
