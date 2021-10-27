@@ -705,6 +705,32 @@ std::wstring jwq::CStringHelper::AnsiToWstring(std::string strAnsi)
 	return charToWstring(strAnsi, CP_ACP);
 }
 
+std::string jwq::CStringHelper::AnsiToUtf8(std::string strAnsi)
+{
+	std::wstring w;
+	auto l = MultiByteToWideChar(CP_ACP, NULL, strAnsi.c_str(), -1, NULL, NULL);
+	w.resize(l - 1);
+	l = MultiByteToWideChar(CP_ACP, NULL, strAnsi.c_str(), -1, &w[0], l);
+	l = WideCharToMultiByte(CP_UTF8, NULL, w.c_str(), -1, NULL, NULL, NULL, NULL);
+	std::string u;
+	u.resize(l - 1);
+	l = WideCharToMultiByte(CP_UTF8, NULL, w.c_str(), -1, &u[0], l, NULL, NULL);
+	return u;
+}
+
+std::string jwq::CStringHelper::Utf8ToAnsi(std::string strUtf8)
+{
+	std::wstring w;
+	auto l = MultiByteToWideChar(CP_UTF8, NULL, strUtf8.c_str(), -1, NULL, NULL);
+	w.resize(l - 1);
+	l = MultiByteToWideChar(CP_UTF8, NULL, strUtf8.c_str(), -1, &w[0], l);
+	l = WideCharToMultiByte(CP_ACP, NULL, w.c_str(), -1, NULL, NULL, NULL, NULL);
+	std::string u;
+	u.resize(l - 1);
+	l = WideCharToMultiByte(CP_ACP, NULL, w.c_str(), -1, &u[0], l, NULL, NULL);
+	return u;
+}
+
 std::string jwq::CStringHelper::wcharToString(std::wstring str, DWORD nCodePage)
 {
 	int nLen = ::WideCharToMultiByte(nCodePage, 0, str.c_str(), str.length(), NULL, 0,NULL,NULL) + 2;
