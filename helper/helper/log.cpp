@@ -58,7 +58,7 @@ void logInit()
 {
 	std::wstring strPathW = jwq::CPathHelper::GetDeskPath();
 	strPathW.append(L"\\jwq.log");
-	std::string strPathA = jwq::CStringHelper::WstringToAnsi(strPathW);
+	std::string strPathA = jwq::CStringHelper::w2a(strPathW);
 	
 	FILE* fp = fopen(strPathA.c_str(), "at+");
 	if (fp == nullptr)

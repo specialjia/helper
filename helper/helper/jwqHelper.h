@@ -113,12 +113,12 @@ protected:
 	{
 	public:
 		static std::vector<std::wstring> splite(std::wstring& str, std::wstring& strSeparator);
-		static std::string WstringToAnsi(std::wstring strW);
-		static std::string WstringToUtf8(std::wstring strW);
-		static std::wstring Utf8ToWstring(std::string strUtf8);
-		static std::wstring AnsiToWstring(std::string strAnsi);
-		static std::string AnsiToUtf8(std::string strAnsi);
-		static  std::string Utf8ToAnsi(std::string strUtf8);
+		static std::string w2a(std::wstring strW);
+		static std::string w2u(std::wstring strW);
+		static std::wstring u2w(std::string strUtf8);
+		static std::wstring a2w(std::string strAnsi);
+		static std::string a2u(std::string strAnsi);
+		static  std::string u2a(std::string strUtf8);
 
 		static std::string  wcharToString(std::wstring str, DWORD nCodePage);
 		static std::wstring charToWstring(std::string str, DWORD nCodePage);

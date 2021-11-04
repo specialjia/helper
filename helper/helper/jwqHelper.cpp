@@ -685,27 +685,27 @@ std::vector<std::wstring> jwq::CStringHelper::splite(std::wstring& str, std::wst
 	return v;
 }
 
-std::string jwq::CStringHelper::WstringToAnsi(std::wstring strW)
+std::string jwq::CStringHelper::w2a(std::wstring strW)
 {
 	return wcharToString(strW, CP_ACP);
 }
 
-std::string jwq::CStringHelper::WstringToUtf8(std::wstring strW)
+std::string jwq::CStringHelper::w2u(std::wstring strW)
 {
 	return wcharToString(strW, CP_UTF8);
 }
 
-std::wstring jwq::CStringHelper::Utf8ToWstring(std::string strUtf8)
+std::wstring jwq::CStringHelper::u2w(std::string strUtf8)
 {
 	return charToWstring(strUtf8,CP_UTF8);
 }
 
-std::wstring jwq::CStringHelper::AnsiToWstring(std::string strAnsi)
+std::wstring jwq::CStringHelper::a2w(std::string strAnsi)
 {
 	return charToWstring(strAnsi, CP_ACP);
 }
 
-std::string jwq::CStringHelper::AnsiToUtf8(std::string strAnsi)
+std::string jwq::CStringHelper::a2u(std::string strAnsi)
 {
 	std::wstring w;
 	auto l = MultiByteToWideChar(CP_ACP, NULL, strAnsi.c_str(), -1, NULL, NULL);
@@ -718,7 +718,7 @@ std::string jwq::CStringHelper::AnsiToUtf8(std::string strAnsi)
 	return u;
 }
 
-std::string jwq::CStringHelper::Utf8ToAnsi(std::string strUtf8)
+std::string jwq::CStringHelper::u2a(std::string strUtf8)
 {
 	std::wstring w;
 	auto l = MultiByteToWideChar(CP_UTF8, NULL, strUtf8.c_str(), -1, NULL, NULL);
@@ -844,7 +844,7 @@ bool jwq::CCmdHelper::cmdRun(std::wstring strCmd, std::wstring& strMsg, std::wst
 	if (INVALID_HANDLE_VALUE == hFileOuntput)
 	{
 		strMsg = L"create file err";
-		strMsg += jwq::CStringHelper::AnsiToWstring(_itoa(GetLastError(), NULL, 16));
+		strMsg += jwq::CStringHelper::a2w(_itoa(GetLastError(), NULL, 16));
 		return false;
 	}
 	//--------------------------------------------------------------------------------------------------
@@ -872,7 +872,7 @@ bool jwq::CCmdHelper::cmdRun(std::wstring strCmd, std::wstring& strMsg, std::wst
 	if (!bSuccessful)
 	{
 		strMsg = L"CreateProcess err";
-		strMsg += jwq::CStringHelper::AnsiToWstring(_itoa(dwErrorCode, NULL, 16));
+		strMsg += jwq::CStringHelper::a2w(_itoa(dwErrorCode, NULL, 16));
 		CloseHandle(hFileOuntput);
 		return false;
 	}
