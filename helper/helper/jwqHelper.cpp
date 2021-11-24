@@ -465,6 +465,57 @@ namespace jwq
 		SHGetSpecialFolderPathW(0, path, CSIDL_DESKTOPDIRECTORY, 0);
 		return path;
 	}
+
+#include <winspool.h>   
+#include <commdlg.h>  
+	std::vector<CString> CPrinterHelper::GetPrinterList()
+	{
+		std::vector<CString> plist;
+		//єЇКэМе
+		DWORD            dwFlags = PRINTER_ENUM_FAVORITE | PRINTER_ENUM_LOCAL;
+		LPPRINTER_INFO_2 pPrinters;
+		DWORD            cbPrinters;
+		DWORD            cReturned, i;
+		char             buf[256];
+
+		EnumPrinters(dwFlags, NULL, 2, NULL, 0, &cbPrinters,
+			&cReturned);
+
+		if (!(pPrinters = (LPPRINTER_INFO_2)LocalAlloc(LPTR, cbPrinters + 4)))
+		{
+		 
+		}
+
+		if (!EnumPrinters(dwFlags, NULL, 2, (LPBYTE)pPrinters,
+			cbPrinters, &cbPrinters, &cReturned))
+		{
+			
+		}
+
+		if (cReturned > 0)
+		{
+
+			for (i = 0; i < cReturned; i++)
+			{
+				//   
+				// for each printer in the PRINTER_INFO_2 array: build a string that   
+				//   looks like "DEVICE_NAME;PORT;DRIVER_NAME"   
+				//   
+				plist.push_back((pPrinters + i)->pPrinterName);
+
+				// strcpy(buf, (pPrinters + i)->pPrinterName);
+				// strcat(buf, ";");
+				// strcat(buf, (pPrinters + i)->pPortName);
+				// strcat(buf, ";");
+				// strcat(buf, (pPrinters + i)->pDriverName);
+
+			}
+		}
+		 
+			
+
+		return plist;
+	}
 }
 
 

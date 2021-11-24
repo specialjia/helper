@@ -1,4 +1,5 @@
 #pragma once
+#include <atlstr.h>
 #include <string>
 #include <vector>
 #include <windows.h>
@@ -147,6 +148,11 @@ protected:
 		static bool DeleteNilDir(std::wstring dir);
 		static std::wstring GetPathDir(std::wstring exePath);
 		static bool EnumDirFile(std::wstring dir,std::vector<std::wstring> &v);
+	};
+
+	class CPrinterHelper {
+	public:
+		static std::vector<CString>  GetPrinterList();
 	};
 	
 }
